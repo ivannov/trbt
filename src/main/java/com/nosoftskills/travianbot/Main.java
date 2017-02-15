@@ -16,12 +16,14 @@
 package com.nosoftskills.travianbot;
 
 import com.nosoftskills.travianbot.page.FarmList;
+import com.nosoftskills.travianbot.page.Home;
 import com.nosoftskills.travianbot.page.Login;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Random;
 
 public class Main {
@@ -36,14 +38,20 @@ public class Main {
         WebDriver driver = new FirefoxDriver();
         Settings settings = Settings.load();
 
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 50; i++) {
             Login loginPage = new Login(driver, settings.getRootUrl());
             loginPage.load();
             loginPage.login(settings.getUserName(), settings.getPassword());
 
+            Home homePage = new Home(driver, settings.getRootUrl());
+            homePage.load();
+            homePage.getIncomingAttacks()
+                    .forEach(incomingAttack -> System.out.println("Incoming attack on " + incomingAttack.getVillageName() + " in " + incomingAttack.getInTime()));
+
             FarmList farmListPage = new FarmList(driver, settings.getRootUrl());
             farmListPage.load();
             farmListPage.raidSingleList("Bononia - 1");
+
             int sleepTime = MINIMUM_SECONDS + random.nextInt(MAXIMUM_SECONDS - MINIMUM_SECONDS);
             System.out.println(ZonedDateTime.now().format(formatter) + ": Sent raids. Sleeping for " + sleepTime + " seconds");
             Thread.sleep(sleepTime * 1000);
