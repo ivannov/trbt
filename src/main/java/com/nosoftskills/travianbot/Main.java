@@ -15,6 +15,7 @@
  */
 package com.nosoftskills.travianbot;
 
+import com.nosoftskills.travianbot.model.IncomingAttack;
 import com.nosoftskills.travianbot.page.FarmList;
 import com.nosoftskills.travianbot.page.Home;
 import com.nosoftskills.travianbot.page.Login;
@@ -23,7 +24,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Main {
@@ -32,6 +35,8 @@ public class Main {
     private static final int MINIMUM_SECONDS = 17 * 60;
     private static final int MAXIMUM_SECONDS = 25 * 60;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss");
+
+    private static Map<String, String> previousIncomingAttacks = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         System.setProperty("webdriver.gecko.driver", "/usr/bin/firefox");
@@ -45,8 +50,10 @@ public class Main {
 
             Home homePage = new Home(driver, settings.getRootUrl());
             homePage.load();
-            homePage.getIncomingAttacks()
-                    .forEach(incomingAttack -> System.out.println("Incoming attack on " + incomingAttack.getVillageName() + " in " + incomingAttack.getInTime()));
+            List<IncomingAttack> currentIncomingAttacks = homePage.getIncomingAttacks();
+            currentIncomingAttacks.forEach(Main::alertForIncomingAttack);
+            previousIncomingAttacks.clear();
+            currentIncomingAttacks.forEach(attack -> previousIncomingAttacks.put(attack.getVillageName(), attack.getNumberOfAttacks()));
 
             FarmList farmListPage = new FarmList(driver, settings.getRootUrl());
             farmListPage.load();
@@ -56,6 +63,12 @@ public class Main {
             System.out.println(ZonedDateTime.now().format(formatter) + ": Sent raids. Sleeping for " + sleepTime + " seconds");
             Thread.sleep(sleepTime * 1000);
         }
+    }
+
+    private static void alertForIncomingAttack(IncomingAttack incomingAttack) {
+        String currentNumber = previousIncomingAttacks.get(incomingAttack.getVillageName());
+        if (!incomingAttack.getNumberOfAttacks().equals(currentNumber))
+            System.out.println("Incoming attack on " + incomingAttack.getVillageName() + " in " + incomingAttack.getInTime());
     }
 
 }

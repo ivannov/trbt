@@ -18,12 +18,14 @@ package com.nosoftskills.travianbot.model;
 public class IncomingAttack {
 
     private String villageName;
+    private String numberOfAttacks;
     private String inTime;
+    private String villageLink;
 
-    public IncomingAttack(String villageName, String inTime) {
+    public IncomingAttack(String villageName) {
         this.villageName = villageName;
-        this.inTime = inTime;
     }
+
 
     public String getVillageName() {
         return villageName;
@@ -31,6 +33,14 @@ public class IncomingAttack {
 
     public void setVillageName(String villageName) {
         this.villageName = villageName;
+    }
+
+    public String getNumberOfAttacks() {
+        return numberOfAttacks;
+    }
+
+    public void setNumberOfAttacks(String numberOfAttacks) {
+        this.numberOfAttacks = numberOfAttacks;
     }
 
     public String getInTime() {
@@ -41,4 +51,11 @@ public class IncomingAttack {
         this.inTime = inTime;
     }
 
+    public String getVillageLink() {
+        return villageLink;
+    }
+
+    public void setVillageLink(String villageLink) {
+        this.villageLink = villageLink;
+    }
 }

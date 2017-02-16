@@ -20,7 +20,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,30 +39,29 @@ public class Home {
 
     public List<IncomingAttack> getIncomingAttacks() {
         List<WebElement> villasUnderAttack = webDriver.findElements(By.cssSelector("li.attack"));
-        List<String> villageNames = villasUnderAttack.stream()
-                .map(webElement -> webElement.findElement(By.className("name")).getText())
+        List<IncomingAttack> incomingAttacks = villasUnderAttack.stream()
+                .map(this::createIncomingAttack)
                 .collect(Collectors.toList());
-        List<String> villageLinks = villasUnderAttack.stream()
-                .map(webElement -> webElement.findElement(By.tagName("a")).getAttribute("href"))
+        return incomingAttacks.stream()
+                .map(this::attachAttackDetails)
                 .collect(Collectors.toList());
-        List<String> attackTimes = villageLinks.stream()
-                .map(this::findInTime)
-                .collect(Collectors.toList());
+    }
 
-        List<IncomingAttack> incomingAttacks = new ArrayList<>(villageNames.size());
-        for (int i = 0; i < villageNames.size(); i++) {
-            incomingAttacks.add(new IncomingAttack(villageNames.get(i), attackTimes.get(i)));
-        }
-        return incomingAttacks;
+    private IncomingAttack createIncomingAttack(WebElement webElement) {
+        IncomingAttack incomingAttack = new IncomingAttack(webElement.findElement(By.className("name")).getText());
+        incomingAttack.setVillageLink(webElement.findElement(By.tagName("a")).getAttribute("href"));
+        return incomingAttack;
     }
 
 
-    private String findInTime(String attribute) {
-        webDriver.get(attribute);
+    private IncomingAttack attachAttackDetails(IncomingAttack incomingAttack) {
+        webDriver.get(incomingAttack.getVillageLink());
         WebElement movementsTable = webDriver.findElement(By.id("movements"));
-        return movementsTable.findElements(By.tagName("tr")).stream()
+        WebElement attackRow = movementsTable.findElements(By.tagName("tr")).stream()
                 .filter(webElement -> !webElement.findElements(By.cssSelector("img.att1")).isEmpty())
-                .map(webElement -> webElement.findElement(By.className("timer")).getText())
                 .findFirst().orElseThrow(IllegalArgumentException::new);
+        incomingAttack.setInTime(attackRow.findElement(By.className("timer")).getText());
+        incomingAttack.setNumberOfAttacks(attackRow.findElement(By.cssSelector("span.a1")).getText().split(" ")[0]);
+        return incomingAttack;
     }
 }
