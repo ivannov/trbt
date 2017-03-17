@@ -25,6 +25,7 @@ public class Settings {
     private String rootUrl;
     private String userName;
     private String password;
+    private String browserLocation;
 
     public String getRootUrl() {
         return rootUrl;
@@ -38,6 +39,10 @@ public class Settings {
         return password;
     }
 
+    public String getBrowserLocation() {
+        return browserLocation;
+    }
+
     public static Settings load() throws IOException {
         if (instance == null) {
             instance = new Settings();
@@ -46,6 +51,7 @@ public class Settings {
             instance.password = System.getProperty("password");
             instance.userName = props.getProperty("userName");
             instance.rootUrl = props.getProperty("rootUrl");
+            instance.browserLocation = props.getProperty("browserLocation");
         }
 
         return instance;

@@ -39,11 +39,12 @@ public class Main {
     private static Map<String, String> previousIncomingAttacks = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("webdriver.gecko.driver", "/usr/bin/firefox");
-        WebDriver driver = new FirefoxDriver();
         Settings settings = Settings.load();
 
-        for (int i = 0; i < 50; i++) {
+        System.setProperty("webdriver.gecko.driver", settings.getBrowserLocation());
+        WebDriver driver = new FirefoxDriver();
+
+        while (true) {
             Login loginPage = new Login(driver, settings.getRootUrl());
             loginPage.load();
             loginPage.login(settings.getUserName(), settings.getPassword());
