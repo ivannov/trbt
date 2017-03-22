@@ -16,6 +16,8 @@
 package com.nosoftskills.travianbot;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class Settings {
@@ -26,6 +28,7 @@ public class Settings {
     private String userName;
     private String password;
     private String browserLocation;
+    private List<String> lists;
 
     public String getRootUrl() {
         return rootUrl;
@@ -43,6 +46,10 @@ public class Settings {
         return browserLocation;
     }
 
+    public List<String> getLists() {
+        return lists;
+    }
+
     public static Settings load() throws IOException {
         if (instance == null) {
             instance = new Settings();
@@ -52,6 +59,7 @@ public class Settings {
             instance.userName = props.getProperty("userName");
             instance.rootUrl = props.getProperty("rootUrl");
             instance.browserLocation = props.getProperty("browserLocation");
+            instance.lists = Arrays.asList(props.getProperty("raidLists").split(","));
         }
 
         return instance;

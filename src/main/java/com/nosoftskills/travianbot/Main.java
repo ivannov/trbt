@@ -57,13 +57,17 @@ public class Main {
             currentIncomingAttacks.forEach(attack -> previousIncomingAttacks.put(attack.getVillageName(), attack.getNumberOfAttacks()));
 
             FarmList farmListPage = new FarmList(driver, settings.getRootUrl());
-            farmListPage.load();
-            farmListPage.raidSingleList("Bononia - 1");
+            settings.getLists().forEach(list -> raidList(farmListPage, list));
 
             int sleepTime = MINIMUM_SECONDS + random.nextInt(MAXIMUM_SECONDS - MINIMUM_SECONDS);
             System.out.println(ZonedDateTime.now().format(formatter) + ": Sent raids. Sleeping for " + sleepTime + " seconds");
             Thread.sleep(sleepTime * 1000);
         }
+    }
+
+    private static void raidList(FarmList farmListPage, String raidList) {
+        farmListPage.load();
+        farmListPage.raidSingleList(raidList);
     }
 
     private static void alertForIncomingAttack(IncomingAttack incomingAttack) {
