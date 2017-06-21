@@ -49,19 +49,24 @@ public class Main {
             loginPage.load();
             loginPage.login(settings.getUserName(), settings.getPassword());
 
-            Home homePage = new Home(driver, settings.getRootUrl());
-            homePage.load();
-            List<IncomingAttack> currentIncomingAttacks = homePage.getIncomingAttacks();
-            currentIncomingAttacks.forEach(Main::alertForIncomingAttack);
-            previousIncomingAttacks.clear();
-            currentIncomingAttacks.forEach(attack -> previousIncomingAttacks.put(attack.getVillageName(), attack.getNumberOfAttacks()));
+//            Home homePage = new Home(driver, settings.getRootUrl());
+//            homePage.load();
+//            List<IncomingAttack> currentIncomingAttacks = homePage.getIncomingAttacks();
+//            currentIncomingAttacks.forEach(Main::alertForIncomingAttack);
+//            previousIncomingAttacks.clear();
+//            currentIncomingAttacks.forEach(attack -> previousIncomingAttacks.put(attack.getVillageName(), attack.getNumberOfAttacks()));
 
-            FarmList farmListPage = new FarmList(driver, settings.getRootUrl());
-            settings.getLists().forEach(list -> raidList(farmListPage, list));
+            try {
+                FarmList farmListPage = new FarmList(driver, settings.getRootUrl());
+                settings.getLists().forEach(list -> raidList(farmListPage, list));
 
-            int sleepTime = MINIMUM_SECONDS + random.nextInt(MAXIMUM_SECONDS - MINIMUM_SECONDS);
-            System.out.println(ZonedDateTime.now().format(formatter) + ": Sent raids. Sleeping for " + sleepTime + " seconds");
-            Thread.sleep(sleepTime * 1000);
+                int sleepTime = MINIMUM_SECONDS + random.nextInt(MAXIMUM_SECONDS - MINIMUM_SECONDS);
+                System.out.println(ZonedDateTime.now().format(formatter) + ": Sent raids. Sleeping for " + sleepTime + " seconds");
+                Thread.sleep(sleepTime * 1000);
+            } catch (IllegalStateException ise) {
+                System.out.println(ise.getMessage());
+                Thread.sleep(60 * 1000);
+            }
         }
     }
 

@@ -58,10 +58,14 @@ public class Home {
         webDriver.get(incomingAttack.getVillageLink());
         WebElement movementsTable = webDriver.findElement(By.id("movements"));
         WebElement attackRow = movementsTable.findElements(By.tagName("tr")).stream()
-                .filter(webElement -> !webElement.findElements(By.cssSelector("img.att1")).isEmpty())
+                .filter(webElement -> !webElement.findElements(By.cssSelector(".att1")).isEmpty() || !webElement.findElements(By.cssSelector(".att3")).isEmpty())
                 .findFirst().orElseThrow(IllegalArgumentException::new);
         incomingAttack.setInTime(attackRow.findElement(By.className("timer")).getText());
-        incomingAttack.setNumberOfAttacks(attackRow.findElement(By.cssSelector("span.a1")).getText().split(" ")[0]);
+        WebElement attackDescription = attackRow.findElement(By.cssSelector(".a1"));
+        if (attackDescription == null) {
+            attackDescription = attackRow.findElement(By.cssSelector(".a1"));
+        }
+        incomingAttack.setNumberOfAttacks(attackDescription.getText().split(" ")[0]);
         return incomingAttack;
     }
 }

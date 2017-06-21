@@ -50,6 +50,9 @@ public class FarmList {
         }
 
         List<WebElement> raidTables = webDriver.findElements(By.className("list"));
+        if (raidTables.size() == 0) {
+            throw new IllegalStateException("Page was not loaded. Most probably the server is down or you don't have internet");
+        }
         List<WebElement> startRaidButtons = webDriver.findElements(By.tagName("button"))
                 .stream()
                 .filter(buttonElement -> buttonElement.getAttribute("value").equals("Стартирай набег"))
